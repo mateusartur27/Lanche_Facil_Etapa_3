@@ -51,7 +51,8 @@ class _StaffProductState extends State<StaffProduct> {
   }
 
   void _feedback(String message, {bool error = false}) {
-    if (mounted) setState(() {
+    if (!mounted) return;
+    setState(() {
       _message = message;
       _error = error;
     });
