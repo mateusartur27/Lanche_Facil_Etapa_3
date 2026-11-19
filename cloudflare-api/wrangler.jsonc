@@ -1,0 +1,22 @@
+{
+  "name": "lanche-facil-etapa3",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-19",
+  "account_id": "c4ff1e50d3dfa7c687923cbaafe1b356",
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "lanche-facil-etapa3-db",
+      "database_id": "8cda2358-98ea-44e7-b756-a01a8c3ad355"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "AUTH_LIMIT",
+      "namespace_id": "1003",
+      "simple": { "limit": 12, "period": 60 }
+    }
+  ],
+  "observability": { "enabled": true }
+}
