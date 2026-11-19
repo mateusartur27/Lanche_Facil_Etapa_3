@@ -39,7 +39,8 @@ class _StaffProductState extends State<StaffProduct> {
   bool _error = false;
 
   String get _productId => widget.entry.product.id;
-  bool get _busy => _picking || _uploading || _downloading || _offeringPermission;
+  bool get _busy =>
+      _picking || _uploading || _downloading || _offeringPermission;
 
   @override
   void initState() {
@@ -70,7 +71,8 @@ class _StaffProductState extends State<StaffProduct> {
   Future<void> _loadPhoto() async {
     try {
       final previous = _attachments[AttachmentKind.photo];
-      final bytes = await widget.api.download(widget.token, _productId, AttachmentKind.photo);
+      final bytes = await widget.api
+          .download(widget.token, _productId, AttachmentKind.photo);
       if (mounted && identical(previous, _attachments[AttachmentKind.photo])) {
         setState(() => _photo = bytes);
       }
@@ -96,14 +98,18 @@ class _StaffProductState extends State<StaffProduct> {
       final file = result.files.single;
       if (file.size <= 0 || file.size > StaffApi.maxBytes) {
         _feedback(
-          file.size <= 0 ? 'O arquivo está vazio.' : 'O arquivo excede o limite de 1 MiB.',
+          file.size <= 0
+              ? 'O arquivo está vazio.'
+              : 'O arquivo excede o limite de 1 MiB.',
           error: true,
         );
         return;
       }
       final extension = file.extension?.toLowerCase();
       if (!_kind.extensions.contains(extension) || file.name.length > 160) {
-        _feedback('Escolha um arquivo em um dos formatos indicados e com nome de até 160 caracteres.', error: true);
+        _feedback(
+            'Escolha um arquivo em um dos formatos indicados e com nome de até 160 caracteres.',
+            error: true);
         return;
       }
       final bytes = file.bytes ?? await result.xFiles.single.readAsBytes();
@@ -130,10 +136,15 @@ class _StaffProductState extends State<StaffProduct> {
     });
     try {
       final sent = await widget.api.upload(
-        widget.token, _productId, kind, file.name, file.bytes,
+        widget.token,
+        _productId,
+        kind,
+        file.name,
+        file.bytes,
         (count, total) {
           if (mounted && total > 0) {
-            setState(() => _progress = (count / total).clamp(0.0, 1.0).toDouble());
+            setState(
+                () => _progress = (count / total).clamp(0.0, 1.0).toDouble());
           }
         },
       );
@@ -143,7 +154,8 @@ class _StaffProductState extends State<StaffProduct> {
         _selection = null;
         if (kind == AttachmentKind.photo) _photo = file.bytes;
       });
-      final notified = await widget.notifications.showSuccess(widget.entry.product.name, kind.label);
+      final notified = await widget.notifications
+          .showSuccess(widget.entry.product.name, kind.label);
       _feedback(widget.notifications.supported && !notified
           ? 'Arquivo salvo no servidor. Habilite as notificações no Android para receber o aviso.'
           : 'Arquivo salvo no servidor.');
@@ -160,7 +172,8 @@ class _StaffProductState extends State<StaffProduct> {
       _message = null;
     });
     try {
-      final bytes = await widget.api.download(widget.token, _productId, AttachmentKind.sheet);
+      final bytes = await widget.api
+          .download(widget.token, _productId, AttachmentKind.sheet);
       if (!mounted) return;
       final path = await FilePicker.saveFile(
         dialogTitle: 'Salvar ficha técnica',
@@ -221,25 +234,33 @@ class _StaffProductState extends State<StaffProduct> {
                           height: 180,
                           width: double.infinity,
                           fit: BoxFit.contain,
-                          errorBuilder: (context, error, stack) => const SizedBox(
+                          errorBuilder: (context, error, stack) =>
+                              const SizedBox(
                             height: 90,
-                            child: Center(child: Text('Não foi possível exibir a imagem.')),
+                            child: Center(
+                                child:
+                                    Text('Não foi possível exibir a imagem.')),
                           ),
                         ),
                       ListTile(
                         leading: const Icon(Icons.image_outlined),
                         title: const Text('Foto do produto'),
-                        subtitle: Text(photo == null ? 'Nenhuma foto enviada' : photo.name),
+                        subtitle: Text(photo == null
+                            ? 'Nenhuma foto enviada'
+                            : photo.name),
                       ),
                       ListTile(
                         leading: const Icon(Icons.picture_as_pdf_outlined),
                         title: const Text('Ficha técnica'),
-                        subtitle: Text(sheet == null ? 'Nenhuma ficha enviada' : sheet.name),
+                        subtitle: Text(sheet == null
+                            ? 'Nenhuma ficha enviada'
+                            : sheet.name),
                         trailing: sheet == null
                             ? null
                             : IconButton(
                                 tooltip: 'Baixar ficha técnica',
-                                onPressed: _busy ? null : () => _saveSheet(sheet),
+                                onPressed:
+                                    _busy ? null : () => _saveSheet(sheet),
                                 icon: const Icon(Icons.download),
                               ),
                       ),
@@ -257,30 +278,36 @@ class _StaffProductState extends State<StaffProduct> {
                         ChoiceChip(
                           label: Text(kind.label),
                           selected: _kind == kind,
-                          onSelected: _busy ? null : (selected) {
-                            if (selected && _kind != kind) {
-                              setState(() {
-                                _kind = kind;
-                                _selection = null;
-                                _message = null;
-                              });
-                            }
-                          },
+                          onSelected: _busy
+                              ? null
+                              : (selected) {
+                                  if (selected && _kind != kind) {
+                                    setState(() {
+                                      _kind = kind;
+                                      _selection = null;
+                                      _message = null;
+                                    });
+                                  }
+                                },
                         ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(_kind == AttachmentKind.photo ? 'PNG ou JPG · até 1 MiB' : 'PDF · até 1 MiB'),
+                  Text(_kind == AttachmentKind.photo
+                      ? 'PNG ou JPG · até 1 MiB'
+                      : 'PDF · até 1 MiB'),
                   const SizedBox(height: 10),
                   OutlinedButton.icon(
                     onPressed: _busy ? null : _pick,
                     icon: const Icon(Icons.attach_file),
                     label: const Text('Selecionar arquivo'),
                   ),
-                  if (file != null) Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Text('${file.name} · ${Attachment.formatSize(file.bytes.length)}'),
-                  ),
+                  if (file != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                          '${file.name} · ${Attachment.formatSize(file.bytes.length)}'),
+                    ),
                   const SizedBox(height: 8),
                   FilledButton.icon(
                     onPressed: _busy || file == null ? null : _upload,
@@ -289,7 +316,8 @@ class _StaffProductState extends State<StaffProduct> {
                   ),
                   if (_uploading) ...[
                     const SizedBox(height: 12),
-                    LinearProgressIndicator(value: progress == 1 ? null : progress),
+                    LinearProgressIndicator(
+                        value: progress == 1 ? null : progress),
                     Text(progress == 1
                         ? 'Aguardando confirmação do servidor…'
                         : 'Enviando… ${((progress ?? 0) * 100).round()}%'),
@@ -302,15 +330,20 @@ class _StaffProductState extends State<StaffProduct> {
                     ),
                 ] else ...[
                   const SizedBox(height: 16),
-                  const Text('Somente consulta. O envio de arquivos exige permissão de funcionário.'),
+                  const Text(
+                      'Somente consulta. O envio de arquivos exige permissão de funcionário.'),
                 ],
-                if (_message != null) Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(
-                    _message!,
-                    style: TextStyle(color: _error ? theme.colorScheme.error : theme.colorScheme.onSurface),
+                if (_message != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      _message!,
+                      style: TextStyle(
+                          color: _error
+                              ? theme.colorScheme.error
+                              : theme.colorScheme.onSurface),
+                    ),
                   ),
-                ),
               ],
             ),
           ),

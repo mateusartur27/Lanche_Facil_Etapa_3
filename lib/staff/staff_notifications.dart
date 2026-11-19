@@ -6,7 +6,8 @@ class StaffNotifications {
   Future<void>? _setup;
   int _nextId = 0;
 
-  bool get supported => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+  bool get supported =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
   Future<void> _initialize() async {
     await _plugin.initialize(const InitializationSettings(
@@ -19,7 +20,8 @@ class StaffNotifications {
     try {
       await (_setup ??= _initialize());
       return await _plugin
-              .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
               ?.requestNotificationsPermission() ??
           false;
     } catch (_) {
@@ -32,8 +34,8 @@ class StaffNotifications {
     if (!supported) return false;
     try {
       await (_setup ??= _initialize());
-      final android = _plugin
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      final android = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
       if (await android?.areNotificationsEnabled() != true) return false;
       await _plugin.show(
         _nextId++,
@@ -43,7 +45,8 @@ class StaffNotifications {
           android: AndroidNotificationDetails(
             'envios_cardapio',
             'Envios do cardápio',
-            channelDescription: 'Confirmações de envio de fotos e fichas técnicas.',
+            channelDescription:
+                'Confirmações de envio de fotos e fichas técnicas.',
             importance: Importance.high,
             priority: Priority.high,
           ),

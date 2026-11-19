@@ -64,7 +64,8 @@ class StaffApi {
       : _dio = Dio(BaseOptions(
           baseUrl: const String.fromEnvironment(
             'STAFF_API_URL',
-            defaultValue: 'https://lanche-facil-etapa3.mateus2002ns.workers.dev',
+            defaultValue:
+                'https://lanche-facil-etapa3.mateus2002ns.workers.dev',
           ),
           connectTimeout: const Duration(seconds: 12),
           receiveTimeout: const Duration(seconds: 25),
@@ -83,18 +84,21 @@ class StaffApi {
           signup ? '/auth/cadastro' : '/auth/login',
           data: {'email': email, 'senha': password},
         ));
-    return (token: data['token'] as String, profile: StaffProfile.fromJson(data));
+    return (
+      token: data['token'] as String,
+      profile: StaffProfile.fromJson(data)
+    );
   }
 
   Future<StaffProfile> profile(String token) async {
-    final data = await _call(() =>
-        _dio.get<Map<String, dynamic>>('/auth/perfil', options: _bearer(token)));
+    final data = await _call(() => _dio
+        .get<Map<String, dynamic>>('/auth/perfil', options: _bearer(token)));
     return StaffProfile.fromJson(data);
   }
 
   Future<void> logout(String token) async {
-    await _call(
-        () => _dio.post<Map<String, dynamic>>('/auth/logout', options: _bearer(token)));
+    await _call(() => _dio.post<Map<String, dynamic>>('/auth/logout',
+        options: _bearer(token)));
   }
 
   Future<List<CatalogEntry>> catalog(String token) async {
@@ -159,7 +163,8 @@ class StaffApi {
         404 => 'Arquivo ou produto não encontrado.',
         413 => 'O arquivo excede o limite de 1 MiB.',
         429 => 'Muitas tentativas. Aguarde um minuto.',
-        int code when code >= 500 => 'O servidor está indisponível. Tente novamente.',
+        int code when code >= 500 =>
+          'O servidor está indisponível. Tente novamente.',
         _ => 'Falha de comunicação. Verifique a conexão e tente novamente.',
       };
       throw StaffApiError(status, message);

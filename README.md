@@ -4,7 +4,8 @@ Projeto Flutter da Etapa 3 da disciplina de Desenvolvimento de Aplicações Móv
 
 ## Executar
 
-- **Android**. Baixe o APK em [Releases](../../releases/latest) e instale em um dispositivo ou emulador. A primeira execução precisa de internet para criar a conta.
+- **Android**. Baixe o APK em [Releases](../../releases/latest) e instale em um dispositivo ou emulador. Se o Android solicitar, autorize a instalação pela origem usada para abrir o APK. O cadastro e o envio precisam de internet.
+- **Navegador**. Abra a [versão web da Etapa 3](https://lanche-facil-etapa3.mateus2002ns.workers.dev/app/) para testar o cadastro, o login, o catálogo e os arquivos.
 - **Código-fonte**. Com Flutter 3.41.9, Android SDK e JDK 17, execute `flutter pub get` e `flutter run` na raiz. Para usar o Chrome, execute `flutter run -d chrome`.
 - **API**. O app usa a [API da Etapa 3](https://lanche-facil-etapa3.mateus2002ns.workers.dev/). O Chrome mantém a sessão em memória até recarregar a página. A notificação local é avaliada no Android.
 
