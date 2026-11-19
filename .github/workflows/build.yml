@@ -24,11 +24,14 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
+      - run: dart format lib/main.dart lib/staff
       - uses: actions/upload-artifact@v4
         with:
-          name: flutter-lockfile
-          path: pubspec.lock
-      - run: dart format --output=none --set-exit-if-changed lib/main.dart lib/staff
+          name: flutter-source-check
+          path: |
+            pubspec.lock
+            lib/main.dart
+            lib/staff/
       - run: flutter analyze lib/main.dart lib/staff
       - run: flutter test
       - run: flutter build web --release --base-href /app/
