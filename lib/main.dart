@@ -5,11 +5,13 @@ import 'staff/staff_app.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(
-    title: 'Lanche Fácil — Gestão do Cardápio',
-    debugShowCheckedModeBanner: false,
-    theme: AppTheme.lightTheme,
-    darkTheme: AppTheme.darkTheme,
-    home: const StaffApp(),
-  ));
+  runApp(
+    MaterialApp(
+      title: 'Lanche Fácil — Gestão do Cardápio',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      home: const StaffApp(),
+    ),
+  );
 }

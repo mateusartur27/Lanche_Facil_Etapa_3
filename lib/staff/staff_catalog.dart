@@ -107,20 +107,26 @@ class _StaffCatalogState extends State<StaffCatalog> {
               padding: const EdgeInsets.all(20),
               children: [
                 Text(widget.profile.email, style: theme.textTheme.titleMedium),
-                Text(widget.profile.canUpload
-                    ? 'Perfil de funcionário'
-                    : 'Perfil de consulta'),
+                Text(
+                  widget.profile.canUpload
+                      ? 'Perfil de funcionário'
+                      : 'Perfil de consulta',
+                ),
                 const SizedBox(height: 16),
                 Text('Produtos', style: theme.textTheme.headlineSmall),
                 if (_loading) const LinearProgressIndicator(),
                 if (_error != null) ...[
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Text(_error!,
-                        style: TextStyle(color: theme.colorScheme.error)),
+                    child: Text(
+                      _error!,
+                      style: TextStyle(color: theme.colorScheme.error),
+                    ),
                   ),
                   OutlinedButton(
-                      onPressed: _load, child: const Text('Tentar novamente')),
+                    onPressed: _load,
+                    child: const Text('Tentar novamente'),
+                  ),
                 ],
                 if (!_loading && _error == null && _entries.isEmpty)
                   const Text('Nenhum produto disponível.'),
@@ -130,19 +136,24 @@ class _StaffCatalogState extends State<StaffCatalog> {
                     child: Card(
                       child: ListTile(
                         leading: Icon(
-                            item.attachments.containsKey(AttachmentKind.photo)
-                                ? Icons.image_outlined
-                                : Icons.fastfood_outlined),
+                          item.attachments.containsKey(AttachmentKind.photo)
+                              ? Icons.image_outlined
+                              : Icons.fastfood_outlined,
+                        ),
                         title: Text(item.product.name),
-                        subtitle: Text([
-                          item.product.categoryId,
-                          if (item.attachments
-                              .containsKey(AttachmentKind.photo))
-                            'Foto',
-                          if (item.attachments
-                              .containsKey(AttachmentKind.sheet))
-                            'Ficha técnica',
-                        ].join(' · ')),
+                        subtitle: Text(
+                          [
+                            item.product.categoryId,
+                            if (item.attachments.containsKey(
+                              AttachmentKind.photo,
+                            ))
+                              'Foto',
+                            if (item.attachments.containsKey(
+                              AttachmentKind.sheet,
+                            ))
+                              'Ficha técnica',
+                          ].join(' · '),
+                        ),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => _open(item),
                       ),

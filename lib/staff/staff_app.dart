@@ -40,8 +40,9 @@ class _StaffAppState extends State<StaffApp> {
       _message = null;
     });
     try {
-      final token =
-          _persistSession ? await _storage.read(key: _sessionKey) : null;
+      final token = _persistSession
+          ? await _storage.read(key: _sessionKey)
+          : null;
       if (token == null || !mounted) return;
       try {
         final profile = await _api.profile(token);
@@ -70,7 +71,9 @@ class _StaffAppState extends State<StaffApp> {
         await _storage.write(key: _sessionKey, value: result.token);
       } catch (_) {
         throw const StaffApiError(
-            null, 'Não foi possível guardar a sessão no dispositivo.');
+          null,
+          'Não foi possível guardar a sessão no dispositivo.',
+        );
       }
     }
     if (!mounted) return;
@@ -132,7 +135,9 @@ class _StaffAppState extends State<StaffApp> {
                 Text(_message ?? 'Falha ao abrir a sessão.'),
                 const SizedBox(height: 12),
                 FilledButton(
-                    onPressed: _restore, child: const Text('Tentar novamente')),
+                  onPressed: _restore,
+                  child: const Text('Tentar novamente'),
+                ),
                 TextButton(
                   onPressed: () => _endSession(expired: true),
                   child: const Text('Limpar sessão'),
@@ -224,19 +229,27 @@ class _LoginFormState extends State<_LoginForm> {
                         children: [
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Image.asset('assets/icons/app_icon.png',
-                                width: 56, height: 56),
+                            child: Image.asset(
+                              'assets/icons/app_icon.png',
+                              width: 56,
+                              height: 56,
+                            ),
                           ),
                           const SizedBox(height: 12),
-                          Text('Lanche Fácil',
-                              style: theme.textTheme.headlineMedium),
+                          Text(
+                            'Lanche Fácil',
+                            style: theme.textTheme.headlineMedium,
+                          ),
                           const Text('Gestão do cardápio'),
                           const SizedBox(height: 24),
-                          Text(_signup ? 'Criar conta' : 'Entrar',
-                              style: theme.textTheme.titleLarge),
+                          Text(
+                            _signup ? 'Criar conta' : 'Entrar',
+                            style: theme.textTheme.titleLarge,
+                          ),
                           if (_signup)
                             const Text(
-                                'Use um e-mail válido. A conta fica pronta na hora.'),
+                              'Use um e-mail válido. A conta fica pronta na hora.',
+                            ),
                           const SizedBox(height: 12),
                           TextFormField(
                             controller: _email,
@@ -244,13 +257,15 @@ class _LoginFormState extends State<_LoginForm> {
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
                             autofillHints: const [AutofillHints.email],
-                            decoration:
-                                const InputDecoration(labelText: 'E-mail'),
+                            decoration: const InputDecoration(
+                              labelText: 'E-mail',
+                            ),
                             validator: (value) {
                               final email = value?.trim() ?? '';
                               if (email.length > 254 ||
-                                  !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
-                                      .hasMatch(email)) {
+                                  !RegExp(
+                                    r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
+                                  ).hasMatch(email)) {
                                 return 'Informe um e-mail válido.';
                               }
                               return null;
@@ -265,7 +280,7 @@ class _LoginFormState extends State<_LoginForm> {
                             autofillHints: [
                               _signup
                                   ? AutofillHints.newPassword
-                                  : AutofillHints.password
+                                  : AutofillHints.password,
                             ],
                             decoration: InputDecoration(
                               labelText: 'Senha',
@@ -273,13 +288,15 @@ class _LoginFormState extends State<_LoginForm> {
                                 onPressed: _busy
                                     ? null
                                     : () =>
-                                        setState(() => _obscure = !_obscure),
+                                          setState(() => _obscure = !_obscure),
                                 tooltip: _obscure
                                     ? 'Mostrar senha'
                                     : 'Ocultar senha',
-                                icon: Icon(_obscure
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined),
+                                icon: Icon(
+                                  _obscure
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined,
+                                ),
                               ),
                             ),
                             validator: (value) {
@@ -291,28 +308,32 @@ class _LoginFormState extends State<_LoginForm> {
                           ),
                           if (message != null) ...[
                             const SizedBox(height: 12),
-                            Text(message,
-                                style:
-                                    TextStyle(color: theme.colorScheme.error)),
+                            Text(
+                              message,
+                              style: TextStyle(color: theme.colorScheme.error),
+                            ),
                           ],
                           const SizedBox(height: 18),
                           FilledButton(
                             onPressed: _busy ? null : _submit,
-                            child: Text(_busy
-                                ? 'Aguarde…'
-                                : _signup
-                                    ? 'Cadastrar e entrar'
-                                    : 'Entrar'),
+                            child: Text(
+                              _busy
+                                  ? 'Aguarde…'
+                                  : _signup
+                                  ? 'Cadastrar e entrar'
+                                  : 'Entrar',
+                            ),
                           ),
                           TextButton(
                             onPressed: _busy
                                 ? null
                                 : () => setState(() {
-                                      _signup = !_signup;
-                                      _error = null;
-                                    }),
+                                    _signup = !_signup;
+                                    _error = null;
+                                  }),
                             child: Text(
-                                _signup ? 'Já tenho conta' : 'Criar conta'),
+                              _signup ? 'Já tenho conta' : 'Criar conta',
+                            ),
                           ),
                         ],
                       ),

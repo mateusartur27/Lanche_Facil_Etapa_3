@@ -10,9 +10,11 @@ class StaffNotifications {
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
   Future<void> _initialize() async {
-    await _plugin.initialize(const InitializationSettings(
-      android: AndroidInitializationSettings('ic_stat_upload'),
-    ));
+    await _plugin.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('ic_stat_upload'),
+      ),
+    );
   }
 
   Future<bool> requestPermission() async {
@@ -21,7 +23,8 @@ class StaffNotifications {
       await (_setup ??= _initialize());
       return await _plugin
               .resolvePlatformSpecificImplementation<
-                  AndroidFlutterLocalNotificationsPlugin>()
+                AndroidFlutterLocalNotificationsPlugin
+              >()
               ?.requestNotificationsPermission() ??
           false;
     } catch (_) {
@@ -34,8 +37,10 @@ class StaffNotifications {
     if (!supported) return false;
     try {
       await (_setup ??= _initialize());
-      final android = _plugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+      final android = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       if (await android?.areNotificationsEnabled() != true) return false;
       await _plugin.show(
         _nextId++,

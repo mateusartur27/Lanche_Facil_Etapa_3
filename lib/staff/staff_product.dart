@@ -71,8 +71,11 @@ class _StaffProductState extends State<StaffProduct> {
   Future<void> _loadPhoto() async {
     try {
       final previous = _attachments[AttachmentKind.photo];
-      final bytes = await widget.api
-          .download(widget.token, _productId, AttachmentKind.photo);
+      final bytes = await widget.api.download(
+        widget.token,
+        _productId,
+        AttachmentKind.photo,
+      );
       if (mounted && identical(previous, _attachments[AttachmentKind.photo])) {
         setState(() => _photo = bytes);
       }
@@ -94,9 +97,10 @@ class _StaffProductState extends State<StaffProduct> {
       );
       if (!mounted || file == null) return;
       setState(() => _selection = null);
-      if (file.size <= 0 || file.size > StaffApi.maxBytes) {
+      final size = await file.length();
+      if (size <= 0 || size > StaffApi.maxBytes) {
         _feedback(
-          file.size <= 0
+          size <= 0
               ? 'O arquivo está vazio.'
               : 'O arquivo excede o limite de 1 MiB.',
           error: true,
@@ -106,8 +110,9 @@ class _StaffProductState extends State<StaffProduct> {
       final extension = file.extension?.toLowerCase();
       if (!_kind.extensions.contains(extension) || file.name.length > 160) {
         _feedback(
-            'Escolha um arquivo em um dos formatos indicados e com nome de até 160 caracteres.',
-            error: true);
+          'Escolha um arquivo em um dos formatos indicados e com nome de até 160 caracteres.',
+          error: true,
+        );
         return;
       }
       final bytes = await file.readAsBytes();
@@ -142,7 +147,8 @@ class _StaffProductState extends State<StaffProduct> {
         (count, total) {
           if (mounted && total > 0) {
             setState(
-                () => _progress = (count / total).clamp(0.0, 1.0).toDouble());
+              () => _progress = (count / total).clamp(0.0, 1.0).toDouble(),
+            );
           }
         },
       );
@@ -152,11 +158,15 @@ class _StaffProductState extends State<StaffProduct> {
         _selection = null;
         if (kind == AttachmentKind.photo) _photo = file.bytes;
       });
-      final notified = await widget.notifications
-          .showSuccess(widget.entry.product.name, kind.label);
-      _feedback(widget.notifications.supported && !notified
-          ? 'Arquivo salvo no servidor. Habilite as notificações no Android para receber o aviso.'
-          : 'Arquivo salvo no servidor.');
+      final notified = await widget.notifications.showSuccess(
+        widget.entry.product.name,
+        kind.label,
+      );
+      _feedback(
+        widget.notifications.supported && !notified
+            ? 'Arquivo salvo no servidor. Habilite as notificações no Android para receber o aviso.'
+            : 'Arquivo salvo no servidor.',
+      );
     } on StaffApiError catch (error) {
       _apiError(error);
     } finally {
@@ -170,8 +180,11 @@ class _StaffProductState extends State<StaffProduct> {
       _message = null;
     });
     try {
-      final bytes = await widget.api
-          .download(widget.token, _productId, AttachmentKind.sheet);
+      final bytes = await widget.api.download(
+        widget.token,
+        _productId,
+        AttachmentKind.sheet,
+      );
       if (!mounted) return;
       final path = await FilePicker.saveFile(
         dialogTitle: 'Salvar ficha técnica',
@@ -195,9 +208,11 @@ class _StaffProductState extends State<StaffProduct> {
     final allowed = await widget.notifications.requestPermission();
     if (!mounted) return;
     setState(() => _offeringPermission = false);
-    _feedback(allowed
-        ? 'Notificações ativadas.'
-        : 'Para receber o aviso, permita notificações nas configurações do Android.');
+    _feedback(
+      allowed
+          ? 'Notificações ativadas.'
+          : 'Para receber o aviso, permita notificações nas configurações do Android.',
+    );
   }
 
   @override
@@ -234,31 +249,34 @@ class _StaffProductState extends State<StaffProduct> {
                           fit: BoxFit.contain,
                           errorBuilder: (context, error, stack) =>
                               const SizedBox(
-                            height: 90,
-                            child: Center(
-                                child:
-                                    Text('Não foi possível exibir a imagem.')),
-                          ),
+                                height: 90,
+                                child: Center(
+                                  child: Text(
+                                    'Não foi possível exibir a imagem.',
+                                  ),
+                                ),
+                              ),
                         ),
                       ListTile(
                         leading: const Icon(Icons.image_outlined),
                         title: const Text('Foto do produto'),
-                        subtitle: Text(photo == null
-                            ? 'Nenhuma foto enviada'
-                            : photo.name),
+                        subtitle: Text(
+                          photo == null ? 'Nenhuma foto enviada' : photo.name,
+                        ),
                       ),
                       ListTile(
                         leading: const Icon(Icons.picture_as_pdf_outlined),
                         title: const Text('Ficha técnica'),
-                        subtitle: Text(sheet == null
-                            ? 'Nenhuma ficha enviada'
-                            : sheet.name),
+                        subtitle: Text(
+                          sheet == null ? 'Nenhuma ficha enviada' : sheet.name,
+                        ),
                         trailing: sheet == null
                             ? null
                             : IconButton(
                                 tooltip: 'Baixar ficha técnica',
-                                onPressed:
-                                    _busy ? null : () => _saveSheet(sheet),
+                                onPressed: _busy
+                                    ? null
+                                    : () => _saveSheet(sheet),
                                 icon: const Icon(Icons.download),
                               ),
                       ),
@@ -291,9 +309,11 @@ class _StaffProductState extends State<StaffProduct> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(_kind == AttachmentKind.photo
-                      ? 'PNG ou JPG · até 1 MiB'
-                      : 'PDF · até 1 MiB'),
+                  Text(
+                    _kind == AttachmentKind.photo
+                        ? 'PNG ou JPG · até 1 MiB'
+                        : 'PDF · até 1 MiB',
+                  ),
                   const SizedBox(height: 10),
                   OutlinedButton.icon(
                     onPressed: _busy ? null : _pick,
@@ -304,7 +324,8 @@ class _StaffProductState extends State<StaffProduct> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Text(
-                          '${file.name} · ${Attachment.formatSize(file.bytes.length)}'),
+                        '${file.name} · ${Attachment.formatSize(file.bytes.length)}',
+                      ),
                     ),
                   const SizedBox(height: 8),
                   FilledButton.icon(
@@ -315,10 +336,13 @@ class _StaffProductState extends State<StaffProduct> {
                   if (_uploading) ...[
                     const SizedBox(height: 12),
                     LinearProgressIndicator(
-                        value: progress == 1 ? null : progress),
-                    Text(progress == 1
-                        ? 'Aguardando confirmação do servidor…'
-                        : 'Enviando… ${((progress ?? 0) * 100).round()}%'),
+                      value: progress == 1 ? null : progress,
+                    ),
+                    Text(
+                      progress == 1
+                          ? 'Aguardando confirmação do servidor…'
+                          : 'Enviando… ${((progress ?? 0) * 100).round()}%',
+                    ),
                   ],
                   if (widget.notifications.supported)
                     TextButton.icon(
@@ -329,7 +353,8 @@ class _StaffProductState extends State<StaffProduct> {
                 ] else ...[
                   const SizedBox(height: 16),
                   const Text(
-                      'Somente consulta. O envio de arquivos exige permissão de funcionário.'),
+                    'Somente consulta. O envio de arquivos exige permissão de funcionário.',
+                  ),
                 ],
                 if (_message != null)
                   Padding(
@@ -337,9 +362,10 @@ class _StaffProductState extends State<StaffProduct> {
                     child: Text(
                       _message!,
                       style: TextStyle(
-                          color: _error
-                              ? theme.colorScheme.error
-                              : theme.colorScheme.onSurface),
+                        color: _error
+                            ? theme.colorScheme.error
+                            : theme.colorScheme.onSurface,
+                      ),
                     ),
                   ),
               ],

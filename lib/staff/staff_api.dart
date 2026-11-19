@@ -17,8 +17,8 @@ enum AttachmentKind {
 
 class Attachment {
   Attachment.fromJson(Map<String, dynamic> json)
-      : name = json['nome'] as String,
-        size = json['tamanho'] as int;
+    : name = json['nome'] as String,
+      size = json['tamanho'] as int;
 
   final String name;
   final int size;
@@ -29,12 +29,12 @@ class Attachment {
 
 class CatalogEntry {
   CatalogEntry.fromJson(Map<String, dynamic> json)
-      : product = Product.fromJson(json),
-        attachments = {
-          for (final field in (json['anexos'] as Map<String, dynamic>).entries)
-            AttachmentKind.values.firstWhere((kind) => kind.path == field.key):
-                Attachment.fromJson(field.value as Map<String, dynamic>),
-        };
+    : product = Product.fromJson(json),
+      attachments = {
+        for (final field in (json['anexos'] as Map<String, dynamic>).entries)
+          AttachmentKind.values.firstWhere((kind) => kind.path == field.key):
+              Attachment.fromJson(field.value as Map<String, dynamic>),
+      };
 
   final Product product;
   final Map<AttachmentKind, Attachment> attachments;
@@ -42,8 +42,8 @@ class CatalogEntry {
 
 class StaffProfile {
   StaffProfile.fromJson(Map<String, dynamic> json)
-      : email = json['email'] as String,
-        canUpload = json['perfil'] == 'funcionario';
+    : email = json['email'] as String,
+      canUpload = json['perfil'] == 'funcionario';
 
   final String email;
   final bool canUpload;
@@ -61,7 +61,8 @@ class StaffApiError implements Exception {
 
 class StaffApi {
   StaffApi()
-      : _dio = Dio(BaseOptions(
+    : _dio = Dio(
+        BaseOptions(
           baseUrl: const String.fromEnvironment(
             'STAFF_API_URL',
             defaultValue:
@@ -70,7 +71,8 @@ class StaffApi {
           connectTimeout: const Duration(seconds: 12),
           receiveTimeout: const Duration(seconds: 25),
           sendTimeout: const Duration(seconds: 25),
-        ));
+        ),
+      );
 
   static const maxBytes = 1024 * 1024;
   final Dio _dio;
@@ -80,30 +82,41 @@ class StaffApi {
     String password, {
     required bool signup,
   }) async {
-    final data = await _call(() => _dio.post<Map<String, dynamic>>(
-          signup ? '/auth/cadastro' : '/auth/login',
-          data: {'email': email, 'senha': password},
-        ));
+    final data = await _call(
+      () => _dio.post<Map<String, dynamic>>(
+        signup ? '/auth/cadastro' : '/auth/login',
+        data: {'email': email, 'senha': password},
+      ),
+    );
     return (
       token: data['token'] as String,
-      profile: StaffProfile.fromJson(data)
+      profile: StaffProfile.fromJson(data),
     );
   }
 
   Future<StaffProfile> profile(String token) async {
-    final data = await _call(() => _dio
-        .get<Map<String, dynamic>>('/auth/perfil', options: _bearer(token)));
+    final data = await _call(
+      () => _dio.get<Map<String, dynamic>>(
+        '/auth/perfil',
+        options: _bearer(token),
+      ),
+    );
     return StaffProfile.fromJson(data);
   }
 
   Future<void> logout(String token) async {
-    await _call(() => _dio.post<Map<String, dynamic>>('/auth/logout',
-        options: _bearer(token)));
+    await _call(
+      () => _dio.post<Map<String, dynamic>>(
+        '/auth/logout',
+        options: _bearer(token),
+      ),
+    );
   }
 
   Future<List<CatalogEntry>> catalog(String token) async {
     final data = await _call(
-        () => _dio.get<List<dynamic>>('/produtos', options: _bearer(token)));
+      () => _dio.get<List<dynamic>>('/produtos', options: _bearer(token)),
+    );
     return data
         .map((item) => CatalogEntry.fromJson(item as Map<String, dynamic>))
         .toList();
@@ -117,23 +130,30 @@ class StaffApi {
     Uint8List bytes,
     ProgressCallback onProgress,
   ) async {
-    final data = await _call(() => _dio.post<Map<String, dynamic>>(
-          _attachmentPath(productId, kind),
-          options: _bearer(token),
-          data: FormData.fromMap({
-            'arquivo': MultipartFile.fromBytes(bytes, filename: filename),
-          }),
-          onSendProgress: onProgress,
-        ));
+    final data = await _call(
+      () => _dio.post<Map<String, dynamic>>(
+        _attachmentPath(productId, kind),
+        options: _bearer(token),
+        data: FormData.fromMap({
+          'arquivo': MultipartFile.fromBytes(bytes, filename: filename),
+        }),
+        onSendProgress: onProgress,
+      ),
+    );
     return Attachment.fromJson(data);
   }
 
   Future<Uint8List> download(
-      String token, String productId, AttachmentKind kind) async {
-    final bytes = await _call(() => _dio.get<List<int>>(
-          _attachmentPath(productId, kind),
-          options: _bearer(token)..responseType = ResponseType.bytes,
-        ));
+    String token,
+    String productId,
+    AttachmentKind kind,
+  ) async {
+    final bytes = await _call(
+      () => _dio.get<List<int>>(
+        _attachmentPath(productId, kind),
+        options: _bearer(token)..responseType = ResponseType.bytes,
+      ),
+    );
     return Uint8List.fromList(bytes);
   }
 
