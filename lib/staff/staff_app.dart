@@ -141,7 +141,9 @@ class _StaffAppState extends State<StaffApp> {
     }
 
     final profile = _profile;
-    if (profile == null) return _LoginForm(submit: _login, sessionMessage: _message);
+    if (profile == null) {
+      return _LoginForm(submit: _login, sessionMessage: _message);
+    }
     return StaffCatalog(
       api: _api,
       token: _token!,

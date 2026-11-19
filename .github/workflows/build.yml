@@ -26,17 +26,20 @@ jobs:
       - run: dart format lib/main.dart lib/staff
       - run: flutter analyze lib/main.dart lib/staff
       - run: flutter test
-      - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
-          name: lanche-facil-gestao-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: flutter-source-check
+          path: |
+            pubspec.lock
+            lib/main.dart
+            lib/staff/
       - run: flutter build web --release --base-href /app/
       - uses: actions/upload-artifact@v4
         with:
           name: lanche-facil-gestao-web
           path: build/web/
+      - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
-          name: flutter-lockfile
-          path: pubspec.lock
+          name: lanche-facil-gestao-apk
+          path: build/app/outputs/flutter-apk/app-release.apk

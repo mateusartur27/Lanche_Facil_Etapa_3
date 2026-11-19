@@ -143,7 +143,9 @@ class StaffApi {
     try {
       final response = await send();
       final data = response.data;
-      if (data == null) throw const StaffApiError(null, 'Resposta vazia da API.');
+      if (data == null) {
+        throw const StaffApiError(null, 'Resposta vazia da API.');
+      }
       return data;
     } on DioException catch (error) {
       final status = error.response?.statusCode;

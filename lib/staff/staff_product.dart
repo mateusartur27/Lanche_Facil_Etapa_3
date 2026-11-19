@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +45,9 @@ class _StaffProductState extends State<StaffProduct> {
   void initState() {
     super.initState();
     _attachments = Map.of(widget.entry.attachments);
-    if (_attachments.containsKey(AttachmentKind.photo)) _loadPhoto();
+    if (_attachments.containsKey(AttachmentKind.photo)) {
+      _loadPhoto();
+    }
   }
 
   void _feedback(String message, {bool error = false}) {
@@ -85,7 +85,7 @@ class _StaffProductState extends State<StaffProduct> {
       _message = null;
     });
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: _kind.extensions,
         withData: kIsWeb,
@@ -161,7 +161,7 @@ class _StaffProductState extends State<StaffProduct> {
     try {
       final bytes = await widget.api.download(widget.token, _productId, AttachmentKind.sheet);
       if (!mounted) return;
-      final path = await FilePicker.platform.saveFile(
+      final path = await FilePicker.saveFile(
         dialogTitle: 'Salvar ficha técnica',
         fileName: sheet.name,
         type: FileType.custom,
@@ -257,11 +257,13 @@ class _StaffProductState extends State<StaffProduct> {
                           label: Text(kind.label),
                           selected: _kind == kind,
                           onSelected: _busy ? null : (selected) {
-                            if (selected && _kind != kind) setState(() {
-                              _kind = kind;
-                              _selection = null;
-                              _message = null;
-                            });
+                            if (selected && _kind != kind) {
+                              setState(() {
+                                _kind = kind;
+                                _selection = null;
+                                _message = null;
+                              });
+                            }
                           },
                         ),
                     ],
