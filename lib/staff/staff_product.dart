@@ -88,14 +88,12 @@ class _StaffProductState extends State<StaffProduct> {
       _message = null;
     });
     try {
-      final result = await FilePicker.pickFiles(
+      final file = await FilePicker.pickFile(
         type: FileType.custom,
         allowedExtensions: _kind.extensions,
-        withData: kIsWeb,
       );
-      if (!mounted || result == null) return;
+      if (!mounted || file == null) return;
       setState(() => _selection = null);
-      final file = result.files.single;
       if (file.size <= 0 || file.size > StaffApi.maxBytes) {
         _feedback(
           file.size <= 0
@@ -112,7 +110,7 @@ class _StaffProductState extends State<StaffProduct> {
             error: true);
         return;
       }
-      final bytes = file.bytes ?? await result.xFiles.single.readAsBytes();
+      final bytes = await file.readAsBytes();
       if (bytes.isEmpty || bytes.length > StaffApi.maxBytes) {
         _feedback('O arquivo deve ter entre 1 byte e 1 MiB.', error: true);
         return;
