@@ -133,7 +133,7 @@ class _StaffProductState extends State<StaffProduct> {
   // Atualiza o progresso durante a transmissão e só confirma o envio após a resposta da API.
   Future<void> _upload() async {
     final file = _selection;
-    if (_busy || file == null || !widget.canUpload) return;
+    if (_busy || file == null) return;
     final kind = _kind;
     setState(() {
       _uploading = true;
@@ -289,83 +289,82 @@ class _StaffProductState extends State<StaffProduct> {
                     ],
                   ),
                 ),
-                // Mostra os controles de envio apenas ao perfil autorizado pela API.
-                if (widget.canUpload) ...[
-                  const SizedBox(height: 24),
-                  Text('Enviar arquivo', style: theme.textTheme.titleLarge),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children: [
-                      for (final kind in AttachmentKind.values)
-                        ChoiceChip(
-                          label: Text(kind.label),
-                          selected: _kind == kind,
-                          onSelected: _busy
-                              ? null
-                              : (selected) {
-                                  if (selected && _kind != kind) {
-                                    setState(() {
-                                      _kind = kind;
-                                      _selection = null;
-                                      _message = null;
-                                    });
-                                  }
-                                },
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _kind == AttachmentKind.photo
-                        ? 'PNG ou JPG · até 1 MiB'
-                        : 'PDF · até 1 MiB',
-                  ),
-                  const SizedBox(height: 10),
-                  OutlinedButton.icon(
-                    onPressed: _busy ? null : _pick,
-                    icon: const Icon(Icons.attach_file),
-                    label: const Text('Selecionar arquivo'),
-                  ),
-                  // Mostra o nome e a quantidade de bytes selecionados antes da confirmação do envio.
-                  if (file != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text(
-                        '${file.name} · ${Attachment.formatSize(file.bytes.length)}',
+                const SizedBox(height: 24),
+                Text('Enviar arquivo', style: theme.textTheme.titleLarge),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    for (final kind in AttachmentKind.values)
+                      ChoiceChip(
+                        label: Text(kind.label),
+                        selected: _kind == kind,
+                        onSelected: _busy
+                            ? null
+                            : (selected) {
+                                if (selected && _kind != kind) {
+                                  setState(() {
+                                    _kind = kind;
+                                    _selection = null;
+                                    _message = null;
+                                  });
+                                }
+                              },
                       ),
-                    ),
-                  const SizedBox(height: 8),
-                  FilledButton.icon(
-                    // Desativa o botão enquanto há uma operação em curso ou falta um arquivo válido.
-                    onPressed: _busy || file == null ? null : _upload,
-                    icon: const Icon(Icons.cloud_upload_outlined),
-                    label: const Text('Enviar'),
-                  ),
-                  if (_uploading) ...[
-                    const SizedBox(height: 12),
-                    // Ao transmitir todos os bytes, a barra indica espera pela confirmação do servidor.
-                    LinearProgressIndicator(
-                      value: progress == 1 ? null : progress,
-                    ),
-                    Text(
-                      progress == 1
-                          ? 'Aguardando confirmação do servidor…'
-                          : 'Enviando… ${((progress ?? 0) * 100).round()}%',
-                    ),
                   ],
-                  if (widget.notifications.supported)
-                    TextButton.icon(
-                      onPressed: _busy ? null : _enableNotifications,
-                      icon: const Icon(Icons.notifications_outlined),
-                      label: const Text('Ativar notificações'),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _kind == AttachmentKind.photo
+                      ? 'PNG ou JPG · até 1 MiB'
+                      : 'PDF · até 1 MiB',
+                ),
+                const SizedBox(height: 10),
+                OutlinedButton.icon(
+                  onPressed: _busy ? null : _pick,
+                  icon: const Icon(Icons.attach_file),
+                  label: const Text('Selecionar arquivo'),
+                ),
+                // Mostra o nome e a quantidade de bytes selecionados antes da confirmação do envio.
+                if (file != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      '${file.name} · ${Attachment.formatSize(file.bytes.length)}',
                     ),
-                ] else ...[
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Somente consulta. O envio de arquivos exige permissão de funcionário.',
+                  ),
+                const SizedBox(height: 8),
+                FilledButton.icon(
+                  // Desativa o botão enquanto há uma operação em curso ou falta um arquivo válido.
+                  onPressed: _busy || file == null ? null : _upload,
+                  icon: const Icon(Icons.cloud_upload_outlined),
+                  label: const Text('Enviar'),
+                ),
+                if (!widget.canUpload)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: Text(
+                      'Perfil de consulta. Selecione um arquivo e toque em Enviar para testar o bloqueio HTTP 403 da API.',
+                    ),
+                  ),
+                if (_uploading) ...[
+                  const SizedBox(height: 12),
+                  // Mantém a barra em 100% enquanto aguarda a confirmação da API.
+                  LinearProgressIndicator(
+                    value: progress ?? 0,
+                  ),
+                  Text(
+                    progress == 1
+                        ? '100% enviado. Aguardando confirmação do servidor…'
+                        : 'Enviando… ${((progress ?? 0) * 100).round()}%',
                   ),
                 ],
+                if (widget.canUpload && widget.notifications.supported)
+                  TextButton.icon(
+                    onPressed: _busy ? null : _enableNotifications,
+                    icon: const Icon(Icons.notifications_outlined),
+                    label: const Text('Ativar notificações'),
+                  ),
                 if (_message != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 10),

@@ -2,7 +2,7 @@ name: novo_ifood
 description: "Lanche Fácil — gestão de fotos e fichas técnicas do cardápio."
 publish_to: "none"
 
-version: 3.0.0+3
+version: 3.0.1+4
 
 environment:
   sdk: ">=3.10.0 <4.0.0"
