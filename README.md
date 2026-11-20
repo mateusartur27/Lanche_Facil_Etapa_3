@@ -26,6 +26,8 @@ Siga os passos no Android. Use uma foto PNG ou JPG e um PDF, ambos de até **1 M
 | **7. Controle de acesso** | Saia e entre com `consulta@lanchefacil.test` e `ConsultaFANS2026!`. Abra um produto. Execute também `node test/staff_api_smoke.mjs` com Node.js 22 ou superior. | A conta de consulta pode listar produtos, mas a tela bloqueia o envio. O script verifica **HTTP 200** com autorização, **HTTP 401** sem token ou após revogação e **HTTP 403** ao fazer POST com a conta de consulta. |
 | **8. Logout** | Toque em **Sair**, tente voltar e reabra o app. Em seguida, entre novamente com sua conta de funcionário. | A tela solicita login e o botão Voltar não reabre a área protegida. Ao reconectar, os arquivos já enviados continuam no produto. |
 
+No navegador, abra **F12 → Console** e filtre por `[Lanche Fácil]` para ver o método, a rota e o status de cada resposta da API. Após enviar uma foto, por exemplo, aparece `POST /produtos/cachorro-quente/anexos/foto → HTTP 200`. A aba **Rede** mostra a requisição correspondente. Para observar o **403**, use o comando do passo 7 e confira a saída no terminal. A conta de consulta pode abrir o catálogo e o app oculta a ação de envio.
+
 ### Onde encontrar cada requisito
 
 | Nº | Requisito | Passo | Implementação |

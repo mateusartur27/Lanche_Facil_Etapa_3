@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 
 import '../models/product.dart';
 
@@ -168,10 +169,18 @@ class StaffApi {
   Options _bearer(String token) =>
       Options(headers: {'Authorization': 'Bearer $token'});
 
+  // Registra apenas os dados necessários para identificar a resposta no console.
+  void _logHttp(RequestOptions request, int? status) {
+    if (!kIsWeb) return;
+    final result = status == null ? 'sem resposta HTTP' : 'HTTP $status';
+    debugPrint('[Lanche Fácil] ${request.method} ${request.uri.path} → $result');
+  }
+
   // Preserva o status HTTP e transforma falhas da API em mensagens para a interface.
   Future<T> _call<T>(Future<Response<T>> Function() send) async {
     try {
       final response = await send();
+      _logHttp(response.requestOptions, response.statusCode);
       final data = response.data;
       if (data == null) {
         throw const StaffApiError(null, 'Resposta vazia da API.');
@@ -179,6 +188,7 @@ class StaffApi {
       return data;
     } on DioException catch (error) {
       final status = error.response?.statusCode;
+      _logHttp(error.requestOptions, status);
       final data = error.response?.data;
       if (data is Map && data['erro'] is String) {
         throw StaffApiError(status, data['erro'] as String);
