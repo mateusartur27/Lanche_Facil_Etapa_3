@@ -137,6 +137,7 @@ class StaffApi {
       () => _dio.post<Map<String, dynamic>>(
         _attachmentPath(productId, kind),
         options: _bearer(token),
+        // O Dio monta o multipart e define o separador entre as partes da requisição.
         data: FormData.fromMap({
           'arquivo': MultipartFile.fromBytes(bytes, filename: filename),
         }),

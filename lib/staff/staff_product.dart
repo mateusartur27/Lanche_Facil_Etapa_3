@@ -97,6 +97,7 @@ class _StaffProductState extends State<StaffProduct> {
         allowedExtensions: _kind.extensions,
       );
       if (!mounted || file == null) return;
+      // Limpa a seleção anterior para impedir que um arquivo rejeitado deixe o envio habilitado.
       setState(() => _selection = null);
       final size = await file.length();
       if (size <= 0 || size > StaffApi.maxBytes) {
@@ -148,6 +149,7 @@ class _StaffProductState extends State<StaffProduct> {
         file.bytes,
         (count, total) {
           if (mounted && total > 0) {
+            // Converte a fração de bytes transmitidos para a faixa de 0 a 1 da barra de progresso.
             setState(
               () => _progress = (count / total).clamp(0.0, 1.0).toDouble(),
             );
@@ -160,6 +162,7 @@ class _StaffProductState extends State<StaffProduct> {
         _selection = null;
         if (kind == AttachmentKind.photo) _photo = file.bytes;
       });
+      // O aviso local acontece depois que a API confirma que gravou o arquivo.
       final notified = await widget.notifications.showSuccess(
         widget.entry.product.name,
         kind.label,
@@ -286,6 +289,7 @@ class _StaffProductState extends State<StaffProduct> {
                     ],
                   ),
                 ),
+                // Mostra os controles de envio apenas ao perfil autorizado pela API.
                 if (widget.canUpload) ...[
                   const SizedBox(height: 24),
                   Text('Enviar arquivo', style: theme.textTheme.titleLarge),
@@ -323,6 +327,7 @@ class _StaffProductState extends State<StaffProduct> {
                     icon: const Icon(Icons.attach_file),
                     label: const Text('Selecionar arquivo'),
                   ),
+                  // Mostra o nome e a quantidade de bytes selecionados antes da confirmação do envio.
                   if (file != null)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -332,12 +337,14 @@ class _StaffProductState extends State<StaffProduct> {
                     ),
                   const SizedBox(height: 8),
                   FilledButton.icon(
+                    // Desativa o botão enquanto há uma operação em curso ou falta um arquivo válido.
                     onPressed: _busy || file == null ? null : _upload,
                     icon: const Icon(Icons.cloud_upload_outlined),
                     label: const Text('Enviar'),
                   ),
                   if (_uploading) ...[
                     const SizedBox(height: 12),
+                    // Ao transmitir todos os bytes, a barra indica espera pela confirmação do servidor.
                     LinearProgressIndicator(
                       value: progress == 1 ? null : progress,
                     ),

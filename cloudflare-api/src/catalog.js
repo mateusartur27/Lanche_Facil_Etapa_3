@@ -38,6 +38,7 @@ export async function upload(request, db, user, productId, kind) {
   const body = await readBody(request, maxBytes + 8192);
   const data = await body.formData().catch(() => null);
   const [file] = data?.getAll('arquivo') ?? [];
+  // Exige um único arquivo com conteúdo e aplica o limite de 1 MiB no servidor.
   if (!(file instanceof File) || !file.size || data.getAll('arquivo').length !== 1) {
     throw new ApiError(400, 'Selecione um arquivo para enviar.');
   }
@@ -63,6 +64,7 @@ export async function upload(request, db, user, productId, kind) {
      ON CONFLICT(usuario_id, produto_id, tipo) DO UPDATE SET
        nome = excluded.nome, mime = excluded.mime, tamanho = excluded.tamanho, dados = excluded.dados`,
   ).bind(user.id, productId, kind, name, format.mime, file.size, bytes.buffer).run();
+  // O HTTP 200 só é retornado depois que o D1 confirma a gravação do arquivo.
   return json({ nome: name, tamanho: file.size });
 }
 

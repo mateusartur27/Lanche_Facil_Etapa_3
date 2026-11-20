@@ -24,6 +24,7 @@ class _StaffAppState extends State<StaffApp> {
   bool _loading = true;
   bool _restoreFailed = false;
 
+  // A sessão sobrevive à reabertura no Android. No navegador, o token fica em memória.
   bool get _persistSession =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
@@ -70,6 +71,7 @@ class _StaffAppState extends State<StaffApp> {
     final result = await _api.signIn(email, password, signup: signup);
     if (_persistSession) {
       try {
+        // A gravação segura acontece antes de liberar a tela protegida.
         await _storage.write(key: _sessionKey, value: result.token);
       } catch (_) {
         throw const StaffApiError(
@@ -113,6 +115,7 @@ class _StaffAppState extends State<StaffApp> {
     if (!mounted) return;
     setState(() {
       _token = null;
+      // Sem perfil em memória, a tela inicial volta a renderizar o formulário de login.
       _profile = null;
       _loading = false;
       _restoreFailed = !storageCleared;
@@ -167,6 +170,7 @@ class _StaffAppState extends State<StaffApp> {
   }
 }
 
+// O formulário usa os mesmos campos de e-mail e senha para entrar e criar conta.
 class _LoginForm extends StatefulWidget {
   const _LoginForm({required this.submit, required this.sessionMessage});
 

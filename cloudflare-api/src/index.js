@@ -41,6 +41,7 @@ export default {
       if (method === 'POST') return await upload(request, env.DB, session, productId, kind);
       return await download(env.DB, session, productId, kind);
     } catch (error) {
+      // Devolve o status previsto da falha, como 401 para sessão inválida e 403 para falta de permissão.
       if (error instanceof ApiError) return json({ erro: error.message }, error.status);
       console.error('Falha no processamento da API', error.message);
       return json({ erro: 'O servidor não conseguiu concluir a operação.' }, 500);

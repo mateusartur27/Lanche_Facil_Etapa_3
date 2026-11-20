@@ -49,6 +49,7 @@ class StaffNotifications {
         _nextId++,
         'Arquivo enviado com sucesso',
         '$attachment · $product',
+        // Define o canal pelo qual o Android agrupa as confirmações de envio.
         const NotificationDetails(
           android: AndroidNotificationDetails(
             'envios_cardapio',
