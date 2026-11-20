@@ -11,6 +11,19 @@ Projeto Flutter da Etapa 3 da disciplina de Desenvolvimento de Aplicações Móv
 
 Use um e-mail de exemplo, como `avaliacao.seunome@exemplo.test`, e uma senha de 8 a 128 caracteres. O cadastro entra na conta imediatamente e dispensa confirmação. Cada conta tem uma cópia lógica do cardápio de exemplo, com anexos visíveis apenas para ela. Use imagens e PDFs de teste.
 
+### Gerar o APK
+
+Use o Flutter 3.41.9, o JDK 17 e o Android SDK configurados. Rode `flutter doctor` e confira a seção **Android toolchain**. Se houver licenças pendentes, execute `flutter doctor --android-licenses` e aceite-as.
+
+Na raiz do projeto, onde está o arquivo `pubspec.yaml`, execute:
+
+```bash
+flutter pub get
+flutter build apk --release
+```
+
+O APK é gerado em `build/app/outputs/flutter-apk/app-release.apk`. Transfira o arquivo para o dispositivo Android e abra-o para instalar. O APK de avaliação usa a configuração de assinatura de depuração do projeto. Se uma instalação anterior tiver sido assinada com outra chave, o Android exige desinstalá-la antes de instalar este APK.
+
 ## Roteiro de avaliação
 
 Siga os passos no Android. Use uma foto PNG ou JPG e um PDF, ambos de até **1 MiB**. Separe também um arquivo acima de 1 MiB. Uma foto próxima do limite em uma rede lenta ajuda a observar a barra de progresso.
