@@ -44,6 +44,18 @@ Siga os passos no Android. Use uma foto PNG ou JPG e um PDF, ambos de até **1 M
 | 12 | Notificação local após sucesso | 3, 5–6 | [Notificações Android](lib/staff/staff_notifications.dart) |
 | 13 | Logout | 8 | [Remoção local da sessão](lib/staff/staff_app.dart) e [revogação no servidor](cloudflare-api/src/session.js) |
 
+### Onde encontrar Tecnologias e recursos
+
+| Tecnologia ou recurso | O que usamos | Onde encontrar |
+|---|---|---|
+| Framework e linguagem | Flutter e Dart | [Configuração do projeto](pubspec.yaml) · [Entrada do app](lib/main.dart) |
+| Seleção de arquivos | `file_picker` para selecionar PDF, PNG e JPG | [Seletor de arquivos](lib/staff/staff_product.dart) |
+| Comunicação HTTP | `Dio` para enviar requisições e acompanhar o progresso do envio | [Cliente HTTP](lib/staff/staff_api.dart) |
+| Upload | `POST` com `multipart/form-data` para fotos e fichas técnicas | [Envio no app](lib/staff/staff_api.dart) · [Recebimento na API](cloudflare-api/src/catalog.js) |
+| Notificações locais | `flutter_local_notifications` para avisar no Android quando o envio é confirmado | [Serviço de notificações](lib/staff/staff_notifications.dart) |
+| Autenticação | Token de acesso Bearer, guardado no Android com `flutter_secure_storage` | [Emissão e validação do token](cloudflare-api/src/session.js) · [Armazenamento no app](lib/staff/staff_app.dart) |
+| Backend | API REST no Cloudflare Workers com banco Cloudflare D1 | [Rotas da API](cloudflare-api/src/index.js) · [Esquema do banco](cloudflare-api/schema.sql) |
+
 ## Backend local
 
 Na pasta `cloudflare-api`, com Node.js 22 ou superior:
