@@ -8,11 +8,16 @@ environment:
   sdk: ">=3.10.0 <4.0.0"
 
 dependencies:
+  # Framework do app. A versão mínima do Dart está na seção environment.
   flutter:
     sdk: flutter
+  # Cliente HTTP usado no login, nas rotas protegidas e no upload com progresso.
   dio: ^5.9.0
+  # Abre o seletor do dispositivo ou do navegador.
   file_picker: ^12.3.0
+  # Exibe a confirmação do envio na central de notificações do Android.
   flutter_local_notifications: 19.5.0
+  # Guarda o token da sessão no armazenamento seguro do Android.
   flutter_secure_storage: ^10.0.0
   http: ^1.6.0
   path: ^1.9.1

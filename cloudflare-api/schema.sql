@@ -1,8 +1,10 @@
+-- Cada produto do catálogo tem um ID e seus dados em JSON.
 CREATE TABLE IF NOT EXISTS produtos (
   id TEXT PRIMARY KEY,
   json TEXT NOT NULL
 );
 
+-- O e-mail identifica a conta. A senha fica representada pelo sal e pelo hash.
 CREATE TABLE IF NOT EXISTS usuarios (
   id TEXT PRIMARY KEY,
   email TEXT NOT NULL UNIQUE,
@@ -11,6 +13,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
   perfil TEXT NOT NULL DEFAULT 'funcionario' CHECK (perfil IN ('funcionario', 'consulta'))
 );
 
+-- Sessões guardam o hash do token, seu titular e o momento de expiração.
 CREATE TABLE IF NOT EXISTS sessoes (
   token_hash TEXT PRIMARY KEY,
   usuario_id TEXT NOT NULL REFERENCES usuarios(id),
@@ -18,6 +21,7 @@ CREATE TABLE IF NOT EXISTS sessoes (
 );
 CREATE INDEX IF NOT EXISTS sessoes_usuario ON sessoes (usuario_id, expira_em);
 
+-- A chave composta separa os arquivos por conta, produto e tipo.
 CREATE TABLE IF NOT EXISTS anexos (
   usuario_id TEXT NOT NULL REFERENCES usuarios(id),
   produto_id TEXT NOT NULL REFERENCES produtos(id),
@@ -29,6 +33,7 @@ CREATE TABLE IF NOT EXISTS anexos (
   PRIMARY KEY (usuario_id, produto_id, tipo)
 );
 
+-- Adiciona os produtos de exemplo sem sobrescrever os registros existentes.
 INSERT OR IGNORE INTO produtos (id, json) VALUES
 ('cachorro-quente', '{"id":"cachorro-quente","estabelecimentoId":"campus-principal","nome":"Cachorro-quente","descricao":"Pão, salsicha, molho, milho, batata palha e complementos.","preco":1400,"categoria":"Lanches","ativo":true,"disponivel":true,"estoque":18,"imagemUrl":null,"ajusteImagem":"contain","criadoEm":"2026-08-16T00:00:00.000","atualizadoEm":"2026-08-16T00:00:00.000"}'),
 ('refrigerante', '{"id":"refrigerante","estabelecimentoId":"campus-principal","nome":"Refrigerante lata","descricao":"Lata de 350 ml servida gelada.","preco":600,"categoria":"Bebidas","ativo":true,"disponivel":true,"estoque":24,"imagemUrl":null,"ajusteImagem":"contain","criadoEm":"2026-08-16T00:00:00.000","atualizadoEm":"2026-08-16T00:00:00.000"}'),

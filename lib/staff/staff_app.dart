@@ -33,6 +33,7 @@ class _StaffAppState extends State<StaffApp> {
     _restore();
   }
 
+  // No Android, lê o token armazenado e consulta o perfil para validar a sessão no servidor.
   Future<void> _restore() async {
     setState(() {
       _loading = true;
@@ -64,6 +65,7 @@ class _StaffAppState extends State<StaffApp> {
     }
   }
 
+  // Só abre a gestão depois que a API aceita as credenciais e emite o token.
   Future<void> _login(String email, String password, bool signup) async {
     final result = await _api.signIn(email, password, signup: signup);
     if (_persistSession) {
@@ -84,6 +86,7 @@ class _StaffAppState extends State<StaffApp> {
     });
   }
 
+  // Limpa a sessão local e, no logout, pede à API que revogue o token.
   Future<void> _endSession({bool expired = false}) async {
     if (_loading) return;
     final token = _token;
@@ -190,6 +193,7 @@ class _LoginFormState extends State<_LoginForm> {
     super.dispose();
   }
 
+  // Valida os campos antes da requisição e bloqueia envios repetidos enquanto aguarda.
   Future<void> _submit() async {
     if (_busy || !_form.currentState!.validate()) return;
     FocusScope.of(context).unfocus();

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'config/theme.dart';
 import 'staff/staff_app.dart';
 
+// Prepara os plugins do Flutter e abre a área de gestão, que decide se deve mostrar o login.
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(

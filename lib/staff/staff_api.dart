@@ -59,6 +59,7 @@ class StaffApiError implements Exception {
   String toString() => status == null ? message : 'HTTP $status · $message';
 }
 
+// Centraliza os pedidos à API para as telas trabalharem com dados e erros já interpretados.
 class StaffApi {
   StaffApi()
     : _dio = Dio(
@@ -77,6 +78,7 @@ class StaffApi {
   static const maxBytes = 1024 * 1024;
   final Dio _dio;
 
+  // O mesmo formulário escolhe a rota de cadastro ou login. As duas emitem um token.
   Future<({String token, StaffProfile profile})> signIn(
     String email,
     String password, {
@@ -122,6 +124,7 @@ class StaffApi {
         .toList();
   }
 
+  // Envia os bytes no campo multipart 'arquivo'. O Dio informa quantos bytes foram transmitidos.
   Future<Attachment> upload(
     String token,
     String productId,
@@ -160,9 +163,11 @@ class StaffApi {
   String _attachmentPath(String productId, AttachmentKind kind) =>
       '/produtos/${Uri.encodeComponent(productId)}/anexos/${kind.path}';
 
+  // Apresenta o token da sessão no cabeçalho exigido pelas rotas protegidas.
   Options _bearer(String token) =>
       Options(headers: {'Authorization': 'Bearer $token'});
 
+  // Preserva o status HTTP e transforma falhas da API em mensagens para a interface.
   Future<T> _call<T>(Future<Response<T>> Function() send) async {
     try {
       final response = await send();

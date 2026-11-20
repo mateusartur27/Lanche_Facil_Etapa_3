@@ -9,6 +9,7 @@ class StaffNotifications {
   bool get supported =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
+  // Prepara o plugin com o ícone usado na barra de notificações do Android.
   Future<void> _initialize() async {
     await _plugin.initialize(
       const InitializationSettings(
@@ -17,6 +18,7 @@ class StaffNotifications {
     );
   }
 
+  // Solicita a permissão de notificações pelo sistema quando a plataforma é Android.
   Future<bool> requestPermission() async {
     if (!supported) return false;
     try {
@@ -33,6 +35,7 @@ class StaffNotifications {
     }
   }
 
+  // Publica o aviso local após o upload confirmado, se as notificações estiverem habilitadas.
   Future<bool> showSuccess(String product, String attachment) async {
     if (!supported) return false;
     try {

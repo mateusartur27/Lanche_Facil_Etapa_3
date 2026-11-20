@@ -8,6 +8,7 @@ const formats = {
   pdf: { mime: 'application/pdf', kind: 'ficha', signature: [37, 80, 68, 70, 45] },
 };
 
+// Lista os produtos e inclui apenas os metadados dos anexos da conta autenticada.
 export async function catalog(db, user) {
   const { results } = await db.prepare(
     `SELECT p.json, a.tipo, a.nome, a.tamanho
@@ -25,6 +26,7 @@ export async function catalog(db, user) {
 }
 
 export async function upload(request, db, user, productId, kind) {
+  // A API verifica a permissão mesmo quando o pedido é feito fora da tela do app.
   if (user.perfil !== 'funcionario') {
     throw new ApiError(403, 'Seu perfil pode consultar o cardápio. O envio exige permissão de funcionário.');
   }
@@ -32,6 +34,7 @@ export async function upload(request, db, user, productId, kind) {
   const product = await db.prepare('SELECT id FROM produtos WHERE id = ?').bind(productId).first();
   if (!product) throw new ApiError(404, 'Produto não encontrado.');
 
+  // O limite do corpo inclui espaço para os cabeçalhos e separadores do multipart.
   const body = await readBody(request, maxBytes + 8192);
   const data = await body.formData().catch(() => null);
   const [file] = data?.getAll('arquivo') ?? [];
@@ -47,11 +50,13 @@ export async function upload(request, db, user, productId, kind) {
     throw new ApiError(415, 'Selecione uma foto PNG/JPG ou uma ficha técnica PDF na opção correspondente.');
   }
 
+  // Confere a assinatura inicial do arquivo além da extensão e do tipo de anexo.
   const bytes = new Uint8Array(await file.arrayBuffer());
   if (!format.signature.every((byte, index) => bytes[index] === byte)) {
     throw new ApiError(415, 'O conteúdo do arquivo não corresponde ao formato informado.');
   }
 
+  // Mantém uma foto e uma ficha por produto e conta. Um novo envio substitui o anterior do mesmo tipo.
   await db.prepare(
     `INSERT INTO anexos (usuario_id, produto_id, tipo, nome, mime, tamanho, dados)
      VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -61,6 +66,7 @@ export async function upload(request, db, user, productId, kind) {
   return json({ nome: name, tamanho: file.size });
 }
 
+// Busca os bytes pelo produto, tipo de anexo e conta autenticada.
 export async function download(db, user, productId, kind) {
   const attachment = await db.prepare(
     'SELECT dados, mime FROM anexos WHERE usuario_id = ? AND produto_id = ? AND tipo = ?',

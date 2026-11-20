@@ -84,6 +84,7 @@ class _StaffProductState extends State<StaffProduct> {
     }
   }
 
+  // Filtra pelo tipo de anexo e verifica o tamanho antes de carregar os bytes do arquivo.
   Future<void> _pick() async {
     if (_busy) return;
     setState(() {
@@ -128,6 +129,7 @@ class _StaffProductState extends State<StaffProduct> {
     }
   }
 
+  // Atualiza o progresso durante a transmissão e só confirma o envio após a resposta da API.
   Future<void> _upload() async {
     final file = _selection;
     if (_busy || file == null || !widget.canUpload) return;
@@ -174,6 +176,7 @@ class _StaffProductState extends State<StaffProduct> {
     }
   }
 
+  // Baixa a ficha da conta autenticada e entrega os bytes ao seletor para salvar.
   Future<void> _saveSheet(Attachment sheet) async {
     setState(() {
       _downloading = true;
